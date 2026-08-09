@@ -1,8 +1,8 @@
 <div align="center">
 
-# LANMP
+<img src="docs/banner.png" alt="LANMP — multiplayer for BeamNG.drive" width="100%">
 
-**Multiplayer for BeamNG.drive — drive together on your LAN or over the internet.**
+Drive together on your LAN or over the internet.
 
 Synced vehicles · nametags with live ping · player list · chat · a server browser that finds
 games on your network by itself.
@@ -20,13 +20,13 @@ One person runs a small C++ server on their own PC, everyone else installs the m
 No launcher, no Python, no bridge process during gameplay — the mod speaks UDP straight from
 BeamNG through LuaSocket.
 
-```
-  ┌────────────────┐        UDP 4144         ┌────────────────┐
-  │  BeamNG + mod  │◄───────────────────────►│  lanmp_server  │  ← the host runs this
-  └────────────────┘                         └────────────────┘
-  ┌────────────────┐                              ▲
-  │  BeamNG + mod  │◄─────────────────────────────┘
-  └────────────────┘   broadcast probe → server shows up in the browser
+```mermaid
+flowchart LR
+    H["BeamNG + LANMP mod<br/><i>the host</i>"] <-->|UDP 4144| S(["lanmp_server<br/><i>runs on the host's PC</i>"])
+    P1["BeamNG + LANMP mod"] <-->|UDP 4144| S
+    P2["BeamNG + LANMP mod"] <-->|UDP 4144| S
+    P1 -.->|broadcast probe| S
+    S -.->|"name, players, map, ping"| P1
 ```
 
 ## Quick start
