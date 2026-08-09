@@ -8,6 +8,7 @@ local extNames = {
   "lanmp_vehicles",
   "lanmp_nametags",
   "lanmp_session",
+  "lanmp_host",
 }
 
 for _, name in ipairs(extNames) do
@@ -19,4 +20,4 @@ for _, name in ipairs(extNames) do
   end
 end
 
-log("I", "lanmp", "LANMP loaded - open the LANMP app from the UI apps menu to connect")
+log("I", "lanmp", "LANMP loaded - open Multiplayer from the main menu to host or join")

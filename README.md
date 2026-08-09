@@ -41,22 +41,30 @@ Both are attached to the [latest release](../../releases/latest), or build them 
 
 ## Quick start
 
+The mod adds a **Multiplayer** button to the main menu and opens it
+automatically when the game loads, asking whether you want to host or join.
+
 **If you are hosting**
 
-1. Grab `LANMP-Server.zip` (or build it — see [Building](#building)) and unzip it anywhere.
-2. Double-click **Launch Online Multiplayer Server Host.bat**. Leave the window open.
-   It opens UDP 4144 in the firewall if it can, and prints the addresses friends can type in.
-3. Install the mod too, then join your own server like everyone else.
+1. Install the mod (see below), start BeamNG, and on the multiplayer page pick
+   **Host a Server**.
+2. Choose a server name, port and map, enter a username, and press
+   **Start Hosting**. The mod launches the bundled server and connects you to
+   it. Friends press **Join a Server** and pick you from the list (or type your
+   IP). Forward **UDP 4144** to play over the internet.
+3. You can also run the server by itself with `LANMP-Server.zip` if you prefer a
+   standalone console window — double-click **Launch Online Multiplayer Server
+   Host.bat**.
 
 **If you are joining**
 
 1. Drop `LANMP.zip` into `%LOCALAPPDATA%\BeamNG.drive\<version>\mods\`.
-2. Start BeamNG, load the same map as the server, open the **LANMP** app
-   (Escape → UI Apps → drag LANMP onto the screen).
-3. Press **Refresh** — servers on your network appear with name, players, map and real ping.
-   Click one, or type the host's IP if you are not on the same network.
-4. First time: pick a username and press **New account**; the server hands back a PIN.
-   That PIN is your password from then on.
+2. Start BeamNG — the multiplayer page opens automatically. Pick **Join a
+   Server**, press **Refresh**, and servers on your network appear with name,
+   players, map and real ping. Click one, or type the host's IP if you are not
+   on the same network.
+3. First time: pick a username and press **New account**; the server hands back
+   a PIN. That PIN is your password from then on.
 
 ## Features
 
@@ -123,7 +131,7 @@ is handled.
 
 ```
 server/    C++17 UDP server (standard library + ws2_32, nothing else)
-mod/       the BeamNG mod: GE extensions, vehicle extensions, UI app
+mod/       the BeamNG mod: GE extensions, vehicle extensions, main-menu page
 tests/     headless fake-client protocol suite
 tools/     packaging scripts + the host launcher bundle
 ```

@@ -1,0 +1,186 @@
+<link rel="stylesheet" href="/ui/modModules/lanmp_menu/lanmp_menu.css">
+<div class="lanmp-menu">
+  <div class="lanmp-header">
+    <span class="lanmp-logo">LANMP</span>
+    <span class="lanmp-tagline">multiplayer for BeamNG.drive</span>
+    <span class="lanmp-status-pill">
+      <span class="lanmp-dot" ng-class="d.state"></span>
+      <span ng-if="d.state === 'connected'">{{d.serverName || d.host}} · {{d.ping}}ms</span>
+      <span ng-if="d.state !== 'connected'">{{d.status}}</span>
+    </span>
+  </div>
+
+  <div class="lanmp-content">
+
+    <!-- choose: host or join -->
+    <div class="lanmp-choose" ng-if="view === 'choose' && d.state !== 'connected'">
+      <div class="lanmp-choice" ng-click="goHost()">
+        <img class="lanmp-choice-icon" src="/ui/modModules/lanmp_menu/icon.svg" alt="">
+        <span class="lanmp-choice-title">Host a Server</span>
+        <span class="lanmp-choice-sub">Start a server on this PC and play. Friends on your network can join, or you can forward a port for internet play.</span>
+      </div>
+      <div class="lanmp-choice" ng-click="goJoin()">
+        <img class="lanmp-choice-icon" src="/ui/modModules/lanmp_menu/icon.svg" alt="">
+        <span class="lanmp-choice-title">Join a Server</span>
+        <span class="lanmp-choice-sub">Browse for servers on your network, or type a host's IP address to connect directly.</span>
+      </div>
+    </div>
+
+    <!-- host -->
+    <div class="lanmp-panel" ng-if="view === 'host' && d.state !== 'connected'">
+      <button class="lanmp-back" ng-click="goChoose()">&larr; back</button>
+      <div class="lanmp-panel-title">Host a Server</div>
+      <div class="lanmp-info">
+        This starts the LANMP server on your PC, then connects you to it so you can drive.
+        Other players press <b>Join a Server</b> and pick you from the list (or type your IP).
+      </div>
+
+      <div class="lanmp-row">
+        <div class="lanmp-field">
+          <span class="lanmp-label">Server name</span>
+          <input class="lanmp-input" type="text" ng-model="host.name" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+        <div class="lanmp-field lanmp-narrow">
+          <span class="lanmp-label">UDP port</span>
+          <input class="lanmp-input" type="number" ng-model="host.port" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+      </div>
+      <div class="lanmp-row">
+        <div class="lanmp-field lanmp-narrow">
+          <span class="lanmp-label">Max players</span>
+          <input class="lanmp-input" type="number" ng-model="host.maxPlayers" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+        <div class="lanmp-field">
+          <span class="lanmp-label">Map</span>
+          <input class="lanmp-input" type="text" ng-model="host.map" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+      </div>
+      <div class="lanmp-row">
+        <label class="lanmp-check">
+          <input type="checkbox" ng-model="host.closed"> Closed registration (invite only — no new accounts)
+        </label>
+      </div>
+
+      <div class="lanmp-row">
+        <div class="lanmp-field">
+          <span class="lanmp-label">Your username</span>
+          <input class="lanmp-input" type="text" ng-model="form.username" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+        <div class="lanmp-field lanmp-narrow">
+          <span class="lanmp-label">PIN (existing)</span>
+          <input class="lanmp-input" type="text" ng-model="form.pin" placeholder="leave blank to register" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+      </div>
+
+      <div class="lanmp-err" ng-if="d.lastError">{{d.lastError}}</div>
+      <div class="lanmp-pinbox" ng-if="d.pin">
+        New account PIN: <b>{{d.pin}}</b> — save it, you need it to log in again.
+      </div>
+
+      <div class="lanmp-row">
+        <button class="lanmp-btn lanmp-primary lanmp-big" ng-click="startHosting()"
+                ng-disabled="d.state === 'connecting' || d.state === 'authenticating' || !form.username">
+          {{d.state === 'disconnected' ? 'Start Hosting' : 'Starting...'}}
+        </button>
+        <button class="lanmp-btn" ng-click="stopHosting()" ng-if="hostRunning">Stop Server</button>
+      </div>
+    </div>
+
+    <!-- join -->
+    <div class="lanmp-panel" ng-if="view === 'join' && d.state !== 'connected'">
+      <button class="lanmp-back" ng-click="goChoose()">&larr; back</button>
+      <div class="lanmp-panel-title">Join a Server</div>
+
+      <div class="lanmp-row lanmp-browserhead">
+        <span class="lanmp-label">Servers on your network</span>
+        <button class="lanmp-btn" ng-click="scan()" ng-disabled="scanning">
+          {{scanning ? 'Scanning...' : 'Refresh'}}
+        </button>
+      </div>
+      <div class="lanmp-servers">
+        <div class="lanmp-server" ng-repeat="s in servers"
+             ng-class="{sel: s.host === form.host && s.port === form.port, bad: !s.compatible}"
+             ng-click="pick(s)" ng-dblclick="pick(s); connect()">
+          <span class="lanmp-name">{{s.name}}</span>
+          <span class="lanmp-sname">{{s.host}}:{{s.port}}</span>
+          <span class="lanmp-count">{{s.players}}/{{s.maxPlayers}}</span>
+          <span class="lanmp-ping" ng-class="{good: s.ping < 60, mid: s.ping >= 60 && s.ping < 150, bad: s.ping >= 150}">{{s.ping}}ms</span>
+        </div>
+        <div class="lanmp-empty" ng-if="!servers.length">
+          {{scanning ? 'Looking for servers...' : 'None found — type an IP below, or have someone host a server.'}}
+        </div>
+      </div>
+
+      <div class="lanmp-row">
+        <div class="lanmp-field">
+          <span class="lanmp-label">Server IP</span>
+          <input class="lanmp-input" type="text" ng-model="form.host" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+        <div class="lanmp-field lanmp-narrow">
+          <span class="lanmp-label">Port</span>
+          <input class="lanmp-input" type="number" ng-model="form.port" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+      </div>
+      <div class="lanmp-row">
+        <div class="lanmp-field">
+          <span class="lanmp-label">Username</span>
+          <input class="lanmp-input" type="text" ng-model="form.username" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+        <div class="lanmp-field lanmp-narrow">
+          <span class="lanmp-label">PIN</span>
+          <input class="lanmp-input" type="text" ng-model="form.pin" ng-focus="focus(true)" ng-blur="focus(false)">
+        </div>
+      </div>
+
+      <div class="lanmp-err" ng-if="d.lastError">{{d.lastError}}</div>
+      <div class="lanmp-pinbox" ng-if="d.pin">
+        New account PIN: <b>{{d.pin}}</b> — save it, you need it to log in again.
+      </div>
+
+      <div class="lanmp-row">
+        <button class="lanmp-btn lanmp-primary lanmp-big" ng-click="connect()"
+                ng-disabled="d.state === 'connecting' || d.state === 'authenticating' || !form.username">
+          {{d.state === 'disconnected' ? 'Connect' : 'Connecting...'}}
+        </button>
+        <button class="lanmp-btn" ng-click="register()" ng-disabled="d.state !== 'disconnected' || !form.username">New account</button>
+        <button class="lanmp-btn" ng-if="d.state !== 'disconnected'" ng-click="disconnect()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- connected -->
+    <div class="lanmp-connected" ng-if="d.state === 'connected'">
+      <div class="lanmp-row lanmp-foot">
+        <span class="lanmp-panel-title">Connected to {{d.serverName || d.host}}</span>
+        <button class="lanmp-btn lanmp-danger" ng-click="disconnect()">Disconnect</button>
+      </div>
+
+      <div class="lanmp-players-box">
+        <div class="lanmp-player" ng-repeat="p in d.players" ng-class="{me: p.isYou}">
+          <span>{{p.name}}<span ng-if="p.isYou"> (you)</span></span>
+          <span class="lanmp-ping" ng-class="{good: p.ping < 60, mid: p.ping >= 60 && p.ping < 150, bad: p.ping >= 150}">{{p.ping}}ms</span>
+        </div>
+      </div>
+
+      <div class="lanmp-chat">
+        <div class="lanmp-msgs" id="lanmp-msgs-menu">
+          <div class="lanmp-msg" ng-repeat="m in d.chat track by $index" ng-class="m.kind">
+            <span class="lanmp-msgname">{{m.name}}:</span> {{m.text}}
+          </div>
+        </div>
+        <div class="lanmp-row">
+          <input class="lanmp-input" type="text" ng-model="chatMsg" placeholder="message"
+                 ng-keypress="chatKey($event)" ng-focus="focus(true)" ng-blur="focus(false)">
+          <button class="lanmp-btn lanmp-primary" ng-click="sendChat()">Send</button>
+        </div>
+      </div>
+
+      <div class="lanmp-row lanmp-foot">
+        <label class="lanmp-check">
+          <input type="checkbox" ng-model="nametags" ng-change="toggleNametags()"> nametags
+        </label>
+        <button class="lanmp-btn" ng-click="stopHosting()" ng-if="hostRunning">Stop Server</button>
+      </div>
+    </div>
+
+  </div>
+</div>

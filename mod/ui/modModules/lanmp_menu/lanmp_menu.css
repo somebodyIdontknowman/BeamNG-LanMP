@@ -1,0 +1,219 @@
+/* LANMP main-menu page */
+.lanmp-menu {
+  --lanmp-accent: #ff9e00;
+  --lanmp-bg: rgba(14, 19, 27, 0.92);
+  --lanmp-panel: rgba(0, 0, 0, 0.35);
+  --lanmp-border: #334455;
+  --lanmp-text: #e0e8f0;
+  --lanmp-dim: #8899aa;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 24px 32px;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  color: var(--lanmp-text);
+  overflow: hidden;
+}
+
+.lanmp-menu .lanmp-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.lanmp-menu .lanmp-logo {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: var(--lanmp-accent);
+  text-shadow: 0 0 18px rgba(255, 158, 0, 0.35);
+}
+.lanmp-menu .lanmp-tagline {
+  font-size: 13px;
+  color: var(--lanmp-dim);
+  letter-spacing: 1px;
+}
+.lanmp-menu .lanmp-status-pill {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  background: var(--lanmp-panel);
+  border: 1px solid var(--lanmp-border);
+  border-radius: 20px;
+}
+.lanmp-menu .lanmp-dot { width: 9px; height: 9px; border-radius: 50%; background: #667788; }
+.lanmp-menu .lanmp-dot.connected { background: #00c864; box-shadow: 0 0 8px #00c864; }
+.lanmp-menu .lanmp-dot.connecting, .lanmp-menu .lanmp-dot.authenticating { background: #ffb020; }
+
+.lanmp-menu .lanmp-content { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+/* ---- choose view ---- */
+.lanmp-choose {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+.lanmp-choice {
+  width: 320px;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--lanmp-bg);
+  border: 1px solid var(--lanmp-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+  color: var(--lanmp-text);
+}
+.lanmp-choice:hover {
+  transform: translateY(-4px);
+  border-color: var(--lanmp-accent);
+  box-shadow: 0 12px 40px rgba(255, 158, 0, 0.18);
+}
+.lanmp-choice .lanmp-choice-icon { width: 84px; height: 84px; }
+.lanmp-choice .lanmp-choice-title { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+.lanmp-choice .lanmp-choice-sub { font-size: 13px; color: var(--lanmp-dim); text-align: center; padding: 0 18px; }
+
+.lanmp-back {
+  align-self: flex-start;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--lanmp-dim);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.lanmp-back:hover { color: var(--lanmp-text); }
+
+/* ---- panels ---- */
+.lanmp-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--lanmp-bg);
+  border: 1px solid var(--lanmp-border);
+  border-radius: 10px;
+  padding: 20px;
+  overflow: hidden;
+}
+.lanmp-panel-title { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+.lanmp-row { display: flex; gap: 8px; align-items: center; }
+.lanmp-field { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.lanmp-field.lanmp-narrow { flex: 0 0 120px; }
+.lanmp-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--lanmp-dim); }
+
+.lanmp-input {
+  width: 100%;
+  padding: 9px 11px;
+  font-size: 14px;
+  color: var(--lanmp-text);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--lanmp-border);
+  border-radius: 5px;
+  outline: none;
+  box-sizing: border-box;
+}
+.lanmp-input:focus { border-color: var(--lanmp-accent); }
+
+.lanmp-btn {
+  padding: 9px 18px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid var(--lanmp-border);
+  background: rgba(255, 255, 255, 0.08);
+  color: #cdd8e4;
+}
+.lanmp-btn:disabled { opacity: 0.45; cursor: default; }
+.lanmp-primary { background: var(--lanmp-accent); border-color: var(--lanmp-accent); color: #1a1a1a; font-weight: 600; }
+.lanmp-primary:disabled { background: #6b5a30; border-color: #6b5a30; color: #2a2a2a; }
+.lanmp-danger { background: rgba(230, 60, 60, 0.18); border-color: rgba(230, 60, 60, 0.5); color: #ff6655; }
+.lanmp-big { padding: 14px 28px; font-size: 16px; }
+
+.lanmp-err {
+  padding: 9px 12px;
+  font-size: 13px;
+  color: #ff6655;
+  background: rgba(230, 60, 60, 0.12);
+  border: 1px solid rgba(230, 60, 60, 0.35);
+  border-radius: 5px;
+}
+.lanmp-pinbox {
+  padding: 9px 12px;
+  font-size: 13px;
+  color: #ffd28a;
+  background: rgba(255, 158, 0, 0.12);
+  border: 1px solid rgba(255, 158, 0, 0.35);
+  border-radius: 5px;
+}
+.lanmp-info { font-size: 12px; color: var(--lanmp-dim); line-height: 1.5; }
+
+.lanmp-check { font-size: 12px; color: var(--lanmp-dim); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+
+/* ---- server browser ---- */
+.lanmp-browserhead { justify-content: space-between; }
+.lanmp-servers {
+  flex: 1;
+  min-height: 80px;
+  overflow-y: auto;
+  border: 1px solid #263341;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.25);
+}
+.lanmp-server {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.lanmp-server:hover { background: rgba(255, 255, 255, 0.06); }
+.lanmp-server.sel { background: rgba(255, 158, 0, 0.16); }
+.lanmp-server.bad { opacity: 0.5; }
+.lanmp-server .lanmp-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lanmp-sname { font-size: 12px; color: #667788; }
+.lanmp-count { font-size: 12px; color: var(--lanmp-dim); }
+.lanmp-ping { font-size: 12px; color: var(--lanmp-dim); }
+.lanmp-ping.good { color: #4cd964; }
+.lanmp-ping.mid { color: #ffb020; }
+.lanmp-ping.bad { color: #ff5c4d; }
+.lanmp-empty { padding: 16px; font-size: 13px; color: var(--lanmp-dim); text-align: center; }
+
+/* ---- connected: players + chat ---- */
+.lanmp-connected { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; }
+.lanmp-players-box {
+  max-height: 30%;
+  overflow-y: auto;
+  border: 1px solid #263341;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.25);
+}
+.lanmp-player {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.lanmp-player.me { background: rgba(255, 158, 0, 0.12); color: #ffb84d; }
+
+.lanmp-chat { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.lanmp-msgs { flex: 1; overflow-y: auto; margin-bottom: 8px; font-size: 13px; padding: 4px; }
+.lanmp-msg { margin-bottom: 4px; word-wrap: break-word; }
+.lanmp-msg.system { color: #7f8fa0; font-style: italic; }
+.lanmp-msgname { color: var(--lanmp-accent); font-weight: 600; }
+
+.lanmp-foot { justify-content: space-between; }
