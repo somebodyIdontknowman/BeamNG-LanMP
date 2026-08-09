@@ -1,0 +1,9 @@
+build/
+dist/
+users.txt
+*.exe
+*.obj
+*.o
+*.log
+__pycache__/
+.vscode/

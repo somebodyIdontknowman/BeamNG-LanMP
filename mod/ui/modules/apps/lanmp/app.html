@@ -1,0 +1,77 @@
+<div class="lanmp" ng-class="{'lanmp-connected': d.state === 'connected'}">
+  <link rel="stylesheet" href="/ui/modules/apps/lanmp/app.css">
+
+  <div class="lanmp-head">
+    <span class="lanmp-dot" ng-class="d.state"></span>
+    <span class="lanmp-title">LANMP</span>
+    <span class="lanmp-sub" ng-if="d.state === 'connected'">
+      {{d.serverName || d.host}} · {{d.ping}}ms
+    </span>
+    <span class="lanmp-sub" ng-if="d.state !== 'connected'">{{d.status}}</span>
+  </div>
+
+  <!-- Connect form -->
+  <div class="lanmp-body" ng-if="d.state !== 'connected'">
+    <div class="lanmp-row">
+      <input class="lanmp-input" type="text" ng-model="form.host" placeholder="server ip"
+             ng-focus="focus(true)" ng-blur="focus(false)">
+      <input class="lanmp-input lanmp-port" type="number" ng-model="form.port"
+             ng-focus="focus(true)" ng-blur="focus(false)">
+    </div>
+    <div class="lanmp-row">
+      <input class="lanmp-input" type="text" ng-model="form.username" placeholder="username"
+             ng-focus="focus(true)" ng-blur="focus(false)">
+      <input class="lanmp-input lanmp-pin" type="text" ng-model="form.pin" placeholder="pin"
+             ng-focus="focus(true)" ng-blur="focus(false)">
+    </div>
+
+    <div class="lanmp-err" ng-if="d.lastError">{{d.lastError}}</div>
+    <div class="lanmp-pinbox" ng-if="d.pin">
+      New account PIN: <b>{{d.pin}}</b> — save it, you need it to log in again.
+    </div>
+
+    <div class="lanmp-row">
+      <button class="lanmp-btn lanmp-primary" ng-click="connect()"
+              ng-disabled="d.state === 'connecting' || d.state === 'authenticating'">
+        {{d.state === 'disconnected' ? 'Connect' : 'Connecting...'}}
+      </button>
+      <button class="lanmp-btn" ng-click="register()"
+              ng-disabled="d.state !== 'disconnected'">New account</button>
+      <button class="lanmp-btn" ng-if="d.state !== 'disconnected'" ng-click="disconnect()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Connected -->
+  <div class="lanmp-body" ng-if="d.state === 'connected'">
+    <div class="lanmp-players">
+      <div class="lanmp-label">Players ({{d.players.length}})</div>
+      <div class="lanmp-player" ng-repeat="p in d.players" ng-class="{me: p.isYou}">
+        <span class="lanmp-name">{{p.name}}<span ng-if="p.isYou"> (you)</span></span>
+        <span class="lanmp-ping" ng-class="{good: p.ping < 60, mid: p.ping >= 60 && p.ping < 150, bad: p.ping >= 150}">
+          {{p.ping}}ms
+        </span>
+      </div>
+    </div>
+
+    <div class="lanmp-chat">
+      <div class="lanmp-label">Chat</div>
+      <div class="lanmp-msgs" id="lanmp-msgs">
+        <div class="lanmp-msg" ng-repeat="m in d.chat track by $index" ng-class="m.kind">
+          <span class="lanmp-msgname">{{m.name}}:</span> {{m.text}}
+        </div>
+      </div>
+      <div class="lanmp-row">
+        <input class="lanmp-input" type="text" ng-model="chatMsg" placeholder="message"
+               ng-keypress="chatKey($event)" ng-focus="focus(true)" ng-blur="focus(false)">
+        <button class="lanmp-btn lanmp-primary" ng-click="sendChat()">Send</button>
+      </div>
+    </div>
+
+    <div class="lanmp-row lanmp-foot">
+      <label class="lanmp-check">
+        <input type="checkbox" ng-model="nametags" ng-change="toggleNametags()"> nametags
+      </label>
+      <button class="lanmp-btn lanmp-danger" ng-click="disconnect()">Disconnect</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+{
+  "name": "LANMP",
+  "authors": "LANMP",
+  "tagLine": "LAN multiplayer for BeamNG.drive",
+  "description": "Drive with other people on your network: synced vehicles, nametags with live ping, player list and chat.",
+  "tags": ["multiplayer", "lan"],
+  "version": "0.1.0"
+}
