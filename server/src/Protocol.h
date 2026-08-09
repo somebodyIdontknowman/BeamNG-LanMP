@@ -26,6 +26,9 @@ enum class Type : uint8_t {
     Login           = 0x05,  // C->S  string user, string pin
     LoginAck        = 0x06,  // S->C  u32 playerId, u32 sessionKey, string map, u8 tickRate
     AuthNack        = 0x07,  // S->C  u8 reason, string message
+    Discover        = 0x08,  // C->S  u16 version, u32 nonce            (LAN broadcast, no auth)
+    DiscoverAck     = 0x09,  // S->C  u16 version, u32 nonce, string serverName, u8 players,
+                             //       u8 maxPlayers, string map, u16 port
 
     PosUpdate       = 0x10,  // C->S  auth, u32 vehId, u32 seq, f32 tim, pos3, rot4, vel3, rvel3
     PosBroadcast    = 0x11,  // S->C  u32 pid, u32 vehId, u32 seq, f32 tim, pos3, rot4, vel3, rvel3, u16 senderPing

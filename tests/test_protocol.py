@@ -20,6 +20,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HELLO, HELLO_ACK = 0x01, 0x02
 REGISTER, REGISTER_ACK = 0x03, 0x04
 LOGIN, LOGIN_ACK, AUTH_NACK = 0x05, 0x06, 0x07
+DISCOVER, DISCOVER_ACK = 0x08, 0x09
 POS_UPDATE, POS_BROADCAST = 0x10, 0x11
 INPUT_UPDATE, INPUT_BROADCAST = 0x12, 0x13
 VEH_SPAWN, VEH_SPAWN_B = 0x20, 0x21
@@ -136,6 +137,10 @@ class FakeClient:
         self.send(bytes([HELLO]) + struct.pack("<H", PROTOCOL_VERSION) + wstr("test"))
         return self.wait_for(HELLO_ACK)
 
+    def discover(self, nonce, timeout=1.0):
+        self.send(bytes([DISCOVER]) + struct.pack("<HI", PROTOCOL_VERSION, nonce))
+        return self.wait_for(DISCOVER_ACK, timeout)
+
     def register(self, name):
         self.send(bytes([REGISTER]) + wstr(name))
         return self.recv_packets()
@@ -249,6 +254,42 @@ class ProtocolTest(unittest.TestCase):
         self.assertTrue(r.u8() > 0)               # max players
         self.assertTrue(r.u8() > 0)               # tick rate
         self.assertTrue(r.string().endswith(".json"))
+
+    def test_discovery_answers_with_server_details(self):
+        c = self.client()
+        r = None
+        for _ in range(3):
+            r = c.discover(0xDEADBEEF)
+            if r is not None:
+                break
+            time.sleep(0.6)   # the server throttles repeat probes per address
+        self.assertIsNotNone(r, "no DiscoverAck")
+        self.assertEqual(r.u16(), PROTOCOL_VERSION)
+        self.assertEqual(r.u32(), 0xDEADBEEF)      # nonce echoed back
+        self.assertTrue(len(r.string()) > 0)       # server name
+        players, max_players = r.u8(), r.u8()
+        self.assertLessEqual(players, max_players)
+        self.assertTrue(r.string().endswith(".json"))
+        self.assertEqual(r.u16(), self.port)
+
+    def test_discovery_is_throttled_per_source(self):
+        c = self.client()
+        for _ in range(3):
+            if c.discover(1) is not None:
+                break
+            time.sleep(0.6)
+        else:
+            self.fail("never got a first DiscoverAck")
+        self.assertIsNone(c.discover(2, timeout=0.3),
+                          "back to back probes should be dropped")
+
+    def test_malformed_discovery_is_ignored(self):
+        c = self.client()
+        c.send(bytes([DISCOVER]))
+        c.send(bytes([DISCOVER]) + b"\x01")
+        c.send(bytes([DISCOVER]) + struct.pack("<H", 999))
+        time.sleep(0.2)
+        self.assertIsNone(self.proc.poll(), "server died on a short Discover")
 
     def test_register_then_duplicate_is_rejected(self):
         c = self.client()

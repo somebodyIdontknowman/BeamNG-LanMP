@@ -7,6 +7,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <iterator>
 #include <random>
 
 namespace lanmp {
@@ -19,6 +20,8 @@ constexpr uint64_t kChatWindowMs      = 5000;
 constexpr size_t   kMaxVehiclesPerPlayer = 8;
 constexpr size_t   kMaxConfigBytes    = 48000;
 constexpr size_t   kMaxChatBytes      = 300;
+constexpr uint64_t kDiscoverMinIntervalMs = 500;
+constexpr size_t   kMaxDiscoverTracked    = 256;
 
 #ifdef _WIN32
 struct WsaInit {
@@ -195,6 +198,7 @@ void Server::handle_datagram(const uint8_t* data, size_t len, const sockaddr_in&
         case Type::Hello:    on_hello(r, from); return;
         case Type::Register: on_register(r, from); return;
         case Type::Login:    on_login(r, from); return;
+        case Type::Discover: on_discover(r, from); return;
         default: break;
     }
 
@@ -235,6 +239,35 @@ void Server::on_hello(Reader& r, const sockaddr_in& from) {
         LOG_WARN("Client at %s speaks protocol %u, server speaks %u", make_addr_key(from).c_str(),
                  version, kProtocolVersion);
     }
+}
+
+// Answers the broadcast probe a client sends while scanning the LAN. Cheap and
+// unauthenticated by design, so it is throttled per address to stay a poor
+// amplification target.
+void Server::on_discover(Reader& r, const sockaddr_in& from) {
+    r.u16();
+    uint32_t nonce = r.u32();
+
+    uint64_t t = now_ms();
+    std::string key = make_addr_key(from);
+    auto it = discover_seen_.find(key);
+    if (it != discover_seen_.end() && t - it->second < kDiscoverMinIntervalMs) return;
+    discover_seen_[key] = t;
+    if (discover_seen_.size() > kMaxDiscoverTracked) {
+        for (auto i = discover_seen_.begin(); i != discover_seen_.end();) {
+            i = (t - i->second > kDiscoverMinIntervalMs) ? discover_seen_.erase(i) : std::next(i);
+        }
+    }
+
+    Writer w(Type::DiscoverAck);
+    w.u16(kProtocolVersion);
+    w.u32(nonce);
+    w.str(cfg_.server_name);
+    w.u8(static_cast<uint8_t>(clients_.size()));
+    w.u8(cfg_.max_players);
+    w.str(cfg_.map);
+    w.u16(cfg_.port);
+    send_raw(from, w.data());
 }
 
 void Server::on_register(Reader& r, const sockaddr_in& from) {

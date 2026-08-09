@@ -12,6 +12,28 @@
 
   <!-- Connect form -->
   <div class="lanmp-body" ng-if="d.state !== 'connected'">
+    <div class="lanmp-row lanmp-browserhead">
+      <span class="lanmp-label">Servers on your network</span>
+      <button class="lanmp-btn lanmp-small" ng-click="scan()" ng-disabled="scanning">
+        {{scanning ? 'Scanning...' : 'Refresh'}}
+      </button>
+    </div>
+    <div class="lanmp-servers">
+      <div class="lanmp-server" ng-repeat="s in servers"
+           ng-class="{sel: s.host === form.host && s.port === form.port, bad: !s.compatible}"
+           ng-click="pick(s)" ng-dblclick="pick(s); connect()">
+        <span class="lanmp-name">{{s.name}}</span>
+        <span class="lanmp-sname">{{s.host}}:{{s.port}}</span>
+        <span class="lanmp-count">{{s.players}}/{{s.maxPlayers}}</span>
+        <span class="lanmp-ping" ng-class="{good: s.ping < 60, mid: s.ping >= 60 && s.ping < 150, bad: s.ping >= 150}">
+          {{s.ping}}ms
+        </span>
+      </div>
+      <div class="lanmp-empty" ng-if="!servers.length">
+        {{scanning ? 'Looking for servers...' : 'None found — type an IP below, or have someone run the server.'}}
+      </div>
+    </div>
+
     <div class="lanmp-row">
       <input class="lanmp-input" type="text" ng-model="form.host" placeholder="server ip"
              ng-focus="focus(true)" ng-blur="focus(false)">

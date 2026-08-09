@@ -84,6 +84,7 @@ private:
 
     void handle_datagram(const uint8_t* data, size_t len, const sockaddr_in& from);
     void on_hello(Reader& r, const sockaddr_in& from);
+    void on_discover(Reader& r, const sockaddr_in& from);
     void on_register(Reader& r, const sockaddr_in& from);
     void on_login(Reader& r, const sockaddr_in& from);
     void on_pos_update(Client& c, Reader& r);
@@ -107,6 +108,7 @@ private:
     uint32_t next_client_id_ = 1;
     uint64_t last_timeout_check_ms_ = 0;
     uint64_t last_roster_ms_ = 0;
+    std::map<std::string, uint64_t> discover_seen_;
 };
 
 }  // namespace lanmp

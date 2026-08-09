@@ -18,6 +18,8 @@ M.Type = {
   Login           = 0x05,
   LoginAck        = 0x06,
   AuthNack        = 0x07,
+  Discover        = 0x08,
+  DiscoverAck     = 0x09,
 
   PosUpdate       = 0x10,
   PosBroadcast    = 0x11,
@@ -153,6 +155,10 @@ function M.hello(clientVersion)
   return u8(M.Type.Hello) .. u16(M.VERSION) .. str(clientVersion or "lanmp")
 end
 
+function M.discover(nonce)
+  return u8(M.Type.Discover) .. u16(M.VERSION) .. u32(nonce or 0)
+end
+
 function M.register(username)
   return u8(M.Type.Register) .. str(username)
 end
@@ -233,6 +239,15 @@ function M.decode(data)
       p.tickRate = r:u8()
       p.map = r:str()
       p.playerCount = r:u8()
+
+    elseif t == M.Type.DiscoverAck then
+      p.version = r:u16()
+      p.nonce = r:u32()
+      p.serverName = r:str()
+      p.players = r:u8()
+      p.maxPlayers = r:u8()
+      p.map = r:str()
+      p.port = r:u16()
 
     elseif t == M.Type.RegisterAck then
       p.username = r:str()

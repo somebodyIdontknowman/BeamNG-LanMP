@@ -21,6 +21,8 @@ angular.module('beamng.apps')
       scope.form = { host: '127.0.0.1', port: 4144, username: '', pin: '' };
       scope.chatMsg = '';
       scope.nametags = true;
+      scope.servers = [];
+      scope.scanning = false;
 
       function lua(cmd) { bngApi.engineLua(cmd); }
       function q(s) { return JSON.stringify(String(s === undefined ? '' : s)); }
@@ -45,6 +47,17 @@ angular.module('beamng.apps')
       };
 
       scope.disconnect = function () { lua('lanmp_session.disconnect()'); };
+
+      scope.scan = function () {
+        scope.scanning = true;
+        scope.servers = [];
+        lua('lanmp_discovery.scan()');
+      };
+
+      scope.pick = function (server) {
+        scope.form.host = server.host;
+        scope.form.port = server.port;
+      };
 
       scope.sendChat = function () {
         if (!scope.chatMsg) { return; }
@@ -77,7 +90,16 @@ angular.module('beamng.apps')
         });
       });
 
+      scope.$on('LanmpServers', function (event, data) {
+        if (!data) { return; }
+        scope.$evalAsync(function () {
+          scope.scanning = data.scanning;
+          scope.servers = data.servers || [];
+        });
+      });
+
       bngApi.engineLua('if lanmp_session then lanmp_session.requestState() end');
+      scope.scan();
     }
   };
 }]);

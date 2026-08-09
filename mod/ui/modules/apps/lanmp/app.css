@@ -63,6 +63,26 @@
 .lanmp-ping.mid { color: #ffb020; }
 .lanmp-ping.bad { color: #ff5c4d; }
 
+.lanmp-browserhead { justify-content: space-between; }
+.lanmp-browserhead .lanmp-label { margin-bottom: 0; }
+.lanmp-small { padding: 3px 8px; font-size: 11px; }
+
+.lanmp-servers {
+  flex: 1; min-height: 60px; max-height: 40%; overflow-y: auto;
+  border: 1px solid #263341; border-radius: 4px; background: rgba(0, 0, 0, 0.25);
+}
+.lanmp-server {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+  font-size: 13px; cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.lanmp-server:hover { background: rgba(255, 255, 255, 0.06); }
+.lanmp-server.sel { background: rgba(255, 158, 0, 0.16); }
+.lanmp-server.bad { opacity: 0.5; }
+.lanmp-server .lanmp-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lanmp-sname { font-size: 11px; color: #667788; }
+.lanmp-count { font-size: 11px; color: #8899aa; }
+.lanmp-empty { padding: 10px 8px; font-size: 11px; color: #667788; text-align: center; }
+
 .lanmp-chat { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 .lanmp-msgs { flex: 1; overflow-y: auto; margin-bottom: 6px; font-size: 12px; }
 .lanmp-msg { margin-bottom: 3px; word-wrap: break-word; }

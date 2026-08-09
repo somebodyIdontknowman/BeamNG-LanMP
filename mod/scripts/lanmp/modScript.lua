@@ -4,6 +4,7 @@
 local extNames = {
   "lanmp_protocol",
   "lanmp_network",
+  "lanmp_discovery",
   "lanmp_vehicles",
   "lanmp_nametags",
   "lanmp_session",
