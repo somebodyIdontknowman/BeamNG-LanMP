@@ -22,11 +22,11 @@ BeamNG through LuaSocket.
 
 ```mermaid
 flowchart LR
-    H["BeamNG + LANMP mod<br/><i>the host</i>"] <-->|UDP 4144| S(["lanmp_server<br/><i>runs on the host's PC</i>"])
-    P1["BeamNG + LANMP mod"] <-->|UDP 4144| S
+    P1["BeamNG + LANMP mod"] <-->|UDP 4144| S(["lanmp_server (on the host's PC)"])
     P2["BeamNG + LANMP mod"] <-->|UDP 4144| S
+    H["BeamNG + LANMP mod (the host)"] <-->|UDP 4144| S
     P1 -.->|broadcast probe| S
-    S -.->|"name, players, map, ping"| P1
+    S -.->|name, players, map, ping| P1
 ```
 
 ## Quick start
