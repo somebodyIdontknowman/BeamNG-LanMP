@@ -29,6 +29,16 @@ flowchart LR
     S -.->|name, players, map, ping| P1
 ```
 
+## Download
+
+| File | Who needs it |
+| --- | --- |
+| [`LANMP.zip`](../../releases/latest) | every player — the BeamNG mod |
+| [`LANMP-Server.zip`](../../releases/latest) | the host — server executable + launcher |
+
+Both are attached to the [latest release](../../releases/latest), or build them yourself
+(see [Building](#building)).
+
 ## Quick start
 
 **If you are hosting**
