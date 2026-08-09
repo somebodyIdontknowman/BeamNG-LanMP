@@ -7,3 +7,4 @@ users.txt
 *.log
 __pycache__/
 .vscode/
+tools-local/

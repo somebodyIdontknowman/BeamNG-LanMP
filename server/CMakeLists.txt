@@ -19,6 +19,7 @@ target_include_directories(lanmp_server PRIVATE src)
 
 if(WIN32)
   target_link_libraries(lanmp_server PRIVATE ws2_32)
+  target_compile_definitions(lanmp_server PRIVATE NOMINMAX)
 endif()
 
 if(MSVC)
